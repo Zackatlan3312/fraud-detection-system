@@ -500,7 +500,7 @@ Este proyecto está bajo la Licencia MIT. Ver archivo `LICENSE` para más detall
 
 ## 👥 Autores
 
-- **Tu Nombre** - *Desarrollo inicial* - [GitHub](https://github.com/tu-usuario)
+- **Tu Nombre** - *Desarrollo inicial* - [GitHub](https://github.com/Zackatlan3312)
 
 ---
 
@@ -517,9 +517,9 @@ Este proyecto está bajo la Licencia MIT. Ver archivo `LICENSE` para más detall
 
 ¿Preguntas o problemas?
 
-- 📧 Email: tu-email@ejemplo.com
-- 🐛 Issues: [GitHub Issues](https://github.com/tu-usuario/fraud-detection/issues)
-- 📖 Docs: [Documentación completa](https://tu-docs.com)
+- 📧 Email: kevinpol3312@gmail.com
+- 🐛 Issues: [GitHub Issues](https://github.com/Zackatlan3312/fraud-detection-system/issues)
+
 
 ---
 

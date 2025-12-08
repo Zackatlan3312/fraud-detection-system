@@ -2285,9 +2285,9 @@ kill -9 [PID]  # Matar proceso
 
 Para preguntas o problemas:
 
-- **Repositorio:** https://github.com/tu-usuario/fraud-detection
-- **Issues:** https://github.com/tu-usuario/fraud-detection/issues
-- **Email:** tu-email@ejemplo.com
+- **Repositorio:** https://github.com/Zackatlan3312/fraud-detection
+- **Issues:** https://github.com/Zackatlan3312/fraud-detection/issues
+- **Email:** kevinpol3312@gmail.com
 
 ---
 

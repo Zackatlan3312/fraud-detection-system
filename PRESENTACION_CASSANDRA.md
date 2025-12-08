@@ -1,7 +1,7 @@
 # 🎯 SISTEMA DE DETECCIÓN DE FRAUDE CON CASSANDRA
 ## Bases de Datos NoSQL - Apache Cassandra
 
-**Estudiantes:** [Tus nombres]  
+**Estudiantes:** [Diego Herminio Ortíz Villalba. Jorge Marcos Sánchez Sánchez]  
 **Materia:** Bases de Datos NoSQL  
 **Fecha:** 8 de Diciembre, 2025
 

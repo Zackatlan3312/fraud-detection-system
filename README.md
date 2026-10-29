@@ -1,6 +1,6 @@
 # Detección de fraude en transacciones
 
-Proyecto académico. Una API recibe cada transacción nueva, la compara con el historial del usuario y decide si se aprueba, se rechaza o se manda a revisión manual. Los datos están en Apache Cassandra, el backend es FastAPI y el panel está hecho en React con Tailwind.
+Proyecto de la materia Bases de Datos NoSQL, hecho con Diego Herminio Ortíz Villalba en diciembre de 2025. Una API recibe cada transacción nueva, la compara con el historial del usuario y decide si se aprueba, se rechaza o se manda a revisión manual. Los datos están en Apache Cassandra, el backend es FastAPI y el panel está hecho en React con Tailwind.
 
 ## Cómo decide
 
@@ -86,9 +86,11 @@ Ejemplo de cuerpo para `/analizar-transaccion`:
 - `scripts/init_database.py`: crea el keyspace y las tablas
 - `frontend/`: panel en React
 
-Los `.md` de la raíz son el material de la entrega: plan y casos de prueba, consultas CQL, documento técnico y el guion de la demostración.
+Los `.md` de la raíz son el material de la entrega: la documentación completa, el documento técnico de Cassandra, las consultas CQL, el plan y los casos de prueba, y la presentación con su guion.
 
 ## Pendientes
 
 - La regla de frecuencia supone que el historial cubre unas 24 horas para sacar el promedio por hora. Con usuarios que compran poco, ese promedio sale bajo.
 - El frontend tiene la URL de la API fija en `localhost:8000`.
+- Las tarjetas del dashboard muestran números fijos; falta conectarlas a la API.
+- `/health` sigue respondiendo `healthy` si Cassandra se cae después de arrancar la API, porque no hace ninguna consulta.

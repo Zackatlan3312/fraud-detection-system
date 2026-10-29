@@ -252,7 +252,44 @@ class CassandraDB:
         except Exception as e:
             logger.error(f"Error obteniendo usuarios: {e}")
             return []
-    
+
+    def esta_disponible(self):
+        """
+        Verifica con una consulta mínima que Cassandra siga respondiendo
+
+        Returns:
+            bool: True si respondió, False si no hay sesión o no contestó
+        """
+        if self.session is None:
+            return False
+
+        try:
+            self.session.execute("SELECT release_version FROM system.local", timeout=3)
+            return True
+        except Exception as e:
+            logger.error(f"Cassandra no responde: {e}")
+            return False
+
+    def contar_transacciones(self):
+        """
+        Cuenta las transacciones guardadas
+
+        COUNT(*) sin llave de partición recorre toda la tabla. Con los datos de
+        prueba no importa; con volumen real habría que llevar un contador aparte.
+
+        Returns:
+            int: Número de transacciones, o None si la consulta falla
+        """
+        try:
+            row = self.session.execute(
+                f"SELECT COUNT(*) FROM {CASSANDRA_KEYSPACE}.transacciones_por_id"
+            ).one()
+            # row[0] y no row.count: las filas son namedtuples y .count es un método
+            return row[0]
+        except Exception as e:
+            logger.error(f"Error contando transacciones: {e}")
+            return None
+
     def __enter__(self):
         """Context manager: entrada"""
         self.connect()

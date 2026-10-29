@@ -4,6 +4,7 @@ API REST para el sistema de detección de fraude
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from typing import Optional, List
 import uvicorn
@@ -98,6 +99,10 @@ app.add_middleware(
 db = CassandraDB()
 detector = FraudDetector(db)
 
+# Decisiones tomadas desde que arrancó la API. Las rechazadas no se guardan
+# en Cassandra, así que este es el único lugar donde se cuentan.
+conteo_decisiones = {"APROBADO": 0, "REVISION_MANUAL": 0, "RECHAZADO": 0}
+
 
 # ==========================================
 # EVENTOS DE CICLO DE VIDA
@@ -143,6 +148,7 @@ async def root():
             "transaccion": "/transaccion/{id_transaccion}",
             "usuarios": "/usuarios",
             "estadisticas": "/estadisticas/{id_usuario}",
+            "resumen": "/resumen",
             "salud": "/health"
         }
     }
@@ -151,21 +157,19 @@ async def root():
 @app.get("/health", tags=["General"])
 async def health_check():
     """Endpoint para verificar el estado del servicio"""
-    try:
-        # Verificar conexión a Cassandra
-        if db.session is None:
-            return {
-                "status": "unhealthy",
-                "database": "disconnected"
-            }
-        
-        return {
-            "status": "healthy",
-            "database": "connected",
-            "keyspace": db.session.keyspace
-        }
-    except Exception as e:
-        raise HTTPException(status_code=503, detail=f"Servicio no disponible: {str(e)}")
+    # Se hace una consulta real: que exista la sesión no garantiza que
+    # Cassandra siga arriba
+    if not db.esta_disponible():
+        return JSONResponse(
+            status_code=503,
+            content={"status": "unhealthy", "database": "disconnected"}
+        )
+
+    return {
+        "status": "healthy",
+        "database": "connected",
+        "keyspace": db.session.keyspace
+    }
 
 
 @app.post("/analizar-transaccion", response_model=RespuestaAnalisis, tags=["Análisis"])
@@ -186,7 +190,8 @@ async def analizar_transaccion(transaccion: Transaccion):
         
         # Analizar con el detector de fraude
         resultado = detector.analizar_transaccion(transaccion_dict)
-        
+        conteo_decisiones[resultado['status']] += 1
+
         # Guardar la transacción si es aprobada o requiere revisión
         transaccion_guardada = False
         if resultado['status'] in ['APROBADO', 'REVISION_MANUAL']:
@@ -316,6 +321,22 @@ async def obtener_estadisticas_usuario(id_usuario: str):
     except Exception as e:
         logger.error(f"Error obteniendo estadísticas: {e}")
         raise HTTPException(status_code=500, detail=f"Error obteniendo estadísticas: {str(e)}")
+
+
+@app.get("/resumen", tags=["Consultas"])
+async def obtener_resumen():
+    """
+    Resumen para el dashboard
+
+    - transacciones_guardadas: lo que hay en Cassandra (null si no respondió)
+    - aprobadas, en_revision, rechazadas: análisis hechos desde que arrancó la API
+    """
+    return {
+        "transacciones_guardadas": db.contar_transacciones(),
+        "aprobadas": conteo_decisiones["APROBADO"],
+        "en_revision": conteo_decisiones["REVISION_MANUAL"],
+        "rechazadas": conteo_decisiones["RECHAZADO"]
+    }
 
 
 # ==========================================

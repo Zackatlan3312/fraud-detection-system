@@ -75,7 +75,7 @@ const TransactionAnalyzer = ({ userIds }) => {
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-8">
-      <h3 className="text-2xl font-bold text-gray-800 mb-6">Analizar TransacciÃ³n</h3>
+      <h3 className="text-2xl font-bold text-gray-800 mb-6">Analizar Transacción</h3>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -161,7 +161,7 @@ const TransactionAnalyzer = ({ userIds }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              PaÃ­s
+              País
             </label>
             <input
               type="text"
@@ -169,14 +169,14 @@ const TransactionAnalyzer = ({ userIds }) => {
               value={formData.pais}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="PaÃ­s"
+              placeholder="País"
               required
             />
           </div>
 
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              MCC (CategorÃ­a)
+              MCC (Categoría)
             </label>
             <select
               name="mcc"
@@ -188,9 +188,9 @@ const TransactionAnalyzer = ({ userIds }) => {
               <option value="">Seleccionar...</option>
               <option value="5411">5411 - Supermercados</option>
               <option value="5812">5812 - Restaurantes</option>
-              <option value="5814">5814 - CafeterÃ­as</option>
+              <option value="5814">5814 - Cafeterías</option>
               <option value="5541">5541 - Gasolineras</option>
-              <option value="5999">5999 - Comercio en lÃ­nea</option>
+              <option value="5999">5999 - Comercio en línea</option>
               <option value="7995">7995 - Apuestas (Alto Riesgo)</option>
             </select>
           </div>
@@ -209,7 +209,7 @@ const TransactionAnalyzer = ({ userIds }) => {
           ) : (
             <>
               <Send className="h-5 w-5" />
-              <span>Analizar TransacciÃ³n</span>
+              <span>Analizar Transacción</span>
             </>
           )}
         </button>

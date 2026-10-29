@@ -9,7 +9,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <Shield className="h-8 w-8 text-blue-600" />
             <span className="ml-2 text-2xl font-bold text-gray-800">
-              Sistema de DetecciÃ³n de Fraude
+              Sistema de Detección de Fraude
             </span>
           </div>
           

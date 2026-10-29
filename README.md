@@ -61,6 +61,7 @@ La API queda en http://localhost:8000 (con Swagger en `/docs`) y el panel en htt
 | GET | `/transaccion/{id_transaccion}` | Una transacción por ID |
 | GET | `/usuarios` | Usuarios que tienen transacciones |
 | GET | `/estadisticas/{id_usuario}` | Totales, promedio, ciudades y comercios frecuentes |
+| GET | `/resumen` | Transacciones guardadas y decisiones tomadas desde que arrancó la API |
 | GET | `/health` | Estado de la API y de la conexión |
 
 Ejemplo de cuerpo para `/analizar-transaccion`:
@@ -92,5 +93,3 @@ Los `.md` de la raíz son el material de la entrega: la documentación completa,
 
 - La regla de frecuencia supone que el historial cubre unas 24 horas para sacar el promedio por hora. Con usuarios que compran poco, ese promedio sale bajo.
 - El frontend tiene la URL de la API fija en `localhost:8000`.
-- Las tarjetas del dashboard muestran números fijos; falta conectarlas a la API.
-- `/health` sigue respondiendo `healthy` si Cassandra se cae después de arrancar la API, porque no hace ninguna consulta.

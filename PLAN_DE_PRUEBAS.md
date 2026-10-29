@@ -40,8 +40,8 @@ Con la API corriendo (`python src/api.py`). Se pueden hacer con `curl` o desde S
 |---|---|---|---|
 | 11 | Raíz | `GET /` | JSON con `servicio`, `version: 2.0.0` y la lista de rutas |
 | 12 | Salud | `GET /health` | `status: healthy`, `database: connected`, `keyspace: finanzas` |
-| 13 | Salud sin base | Detener el contenedor y repetir | Debería responder `unhealthy`, pero hoy sigue diciendo `healthy`: el endpoint solo revisa que exista la sesión, no hace ninguna consulta. Después volver a arrancar el contenedor |
-| 14 | Documentación | Abrir `/docs` | Swagger con las siete rutas agrupadas en General, Análisis y Consultas |
+| 13 | Salud sin base | Detener el contenedor y repetir | 503 con `status: unhealthy` y `database: disconnected`, en no más de unos 3 segundos. Volver a arrancar el contenedor y repetir: debe regresar a `healthy` |
+| 14 | Documentación | Abrir `/docs` | Swagger con las ocho rutas agrupadas en General, Análisis y Consultas |
 
 ### 2.2 Consultas
 
@@ -70,6 +70,8 @@ Todas con `POST /analizar-transaccion` y el mismo usuario (uno con CDMX como ciu
 
 Después de la secuencia, `GET /historial/<uuid>?limite=5` debe mostrar arriba las transacciones 25, 24 y 22, y no la 23 ni la 26, porque las rechazadas no se guardan.
 
+Si la API se reinició antes de empezar la parte 2.3, `GET /resumen` debe dar `aprobadas: 2`, `en_revision: 2` y `rechazadas: 2`, y `transacciones_guardadas` debe haber subido en 4 (las pruebas 22, 24, 25 y 27). La 21 no cuenta porque ni siquiera llega al detector.
+
 ## Parte 3: Panel
 
 Con el panel corriendo (`npm start` en `frontend/`), en http://localhost:3000.
@@ -79,7 +81,7 @@ Con el panel corriendo (`npm start` en `frontend/`), en http://localhost:3000.
 | # | Prueba | Resultado esperado |
 |---|---|---|
 | 28 | Abrir la página | Barra superior, pestañas "Dashboard" y "Analizar Transacción", y el pie de página |
-| 29 | Dashboard | Cuatro tarjetas: Total, Aprobadas, Rechazadas y En revisión. **Los números son fijos (90, 65, 20 y 5)**, el componente todavía no los pide a la API |
+| 29 | Dashboard | Cuatro tarjetas con lo que regresa `/resumen`. "Guardadas en Cassandra" coincide con el `COUNT(*)` de la prueba 5; las otras tres están en cero si la API se acaba de iniciar |
 | 30 | Ancho de celular | Con la ventana angosta, las tarjetas se apilan en una columna |
 
 ### 3.2 Formulario
@@ -104,15 +106,11 @@ Con un usuario distinto al de la parte 2.3, o con datos recién regenerados y un
 
 La prueba 38 sirve para mostrar que la categoría por sí sola no cambia la decisión.
 
+Al regresar a la pestaña Dashboard, las tarjetas deben haber subido: 2 aprobadas, 1 rechazada y 2 en revisión más que antes, y 4 guardadas más.
+
 ### 3.4 Errores
 
 | # | Prueba | Resultado esperado |
 |---|---|---|
 | 39 | Detener la API y analizar | Tarjeta gris con `ERROR` y "Error al conectar con el servidor" |
-| 40 | Recargar con la API detenida | La lista de usuarios muestra un ID de ejemplo (`550e8400...`) en lugar de quedar vacía |
-
-## Pendientes que se ven al probar
-
-- `/health` no detecta que Cassandra se cayó (prueba 13).
-- Las tarjetas del dashboard no están conectadas a la API (prueba 29).
-- Algunos textos del panel tienen los acentos mal codificados, por ejemplo el botón dice "Analizar TransacciÃ³n".
+| 40 | Recargar con la API detenida | El Dashboard avisa que no pudo obtener el resumen y muestra guiones. En la otra pestaña, la lista de usuarios trae un ID de ejemplo (`550e8400...`) en lugar de quedar vacía |

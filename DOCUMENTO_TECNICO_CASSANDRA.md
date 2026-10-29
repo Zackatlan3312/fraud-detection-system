@@ -143,6 +143,8 @@ SELECT * FROM transacciones_por_usuario WHERE ciudad = 'CDMX' ALLOW FILTERING;
 SELECT COUNT(*) FROM transacciones_por_usuario;
 ```
 
+El dashboard usa esa misma consulta, sobre `transacciones_por_id`, para mostrar cuántas transacciones hay. Con los datos de prueba responde al instante; con volumen real habría que llevar la cuenta aparte, por ejemplo en una tabla con una columna de tipo `counter`.
+
 `GROUP BY` solo funciona sobre columnas de la llave primaria, así que algo como "transacciones por ciudad" no se puede pedir en CQL. Por eso `/estadisticas` trae el historial y cuenta en Python.
 
 `SELECT DISTINCT id_usuario` sí es válido porque es la llave de partición, pero también recorre todas las particiones. Con tres usuarios de prueba no importa; con millones habría que tener una tabla aparte de usuarios.

@@ -86,12 +86,13 @@ Corre en el puerto 8000. Swagger queda en `/docs`.
 | Método | Ruta | Qué regresa |
 |---|---|---|
 | GET | `/` | Nombre del servicio, versión y lista de rutas |
-| GET | `/health` | `healthy` si la API tiene sesión abierta con Cassandra |
+| GET | `/health` | `healthy` si Cassandra responde una consulta; si no, 503 con `unhealthy` |
 | POST | `/analizar-transaccion` | Resultado del análisis |
 | GET | `/historial/{id_usuario}?limite=50` | Transacciones del usuario (límite entre 1 y 1000) |
 | GET | `/transaccion/{id_transaccion}` | Una transacción |
 | GET | `/usuarios?limite=100` | IDs de usuarios con transacciones |
 | GET | `/estadisticas/{id_usuario}` | Total, monto total y promedio, ciudades y comercios más frecuentes |
+| GET | `/resumen` | Transacciones guardadas y cuántas se aprobaron, rechazaron o mandaron a revisión desde que arrancó la API |
 
 Respuesta de `/analizar-transaccion` cuando hay algo raro:
 
@@ -107,13 +108,15 @@ Respuesta de `/analizar-transaccion` cuando hay algo raro:
 
 Las estadísticas por usuario se calculan en Python con `Counter` sobre el historial, porque Cassandra no agrupa por columnas que no son parte de la llave.
 
+`/resumen` cuenta las transacciones guardadas con un `COUNT(*)`, que recorre toda la tabla; con los datos de prueba no pesa. Las decisiones se cuentan en memoria dentro de la API, porque las rechazadas no se guardan en Cassandra. Por eso esos tres números vuelven a cero cada vez que se reinicia la API.
+
 CORS permite `localhost:3000` y `localhost:8000`. Para servir el panel desde otro origen hay que agregarlo en `CORS_ORIGINS`.
 
 ## 6. Panel
 
 Tiene dos pestañas:
 
-- **Dashboard**: cuatro tarjetas con totales de transacciones, aprobadas, rechazadas y en revisión. Por ahora los números están fijos en el componente y no vienen de la API.
+- **Dashboard**: cuatro tarjetas que se llenan con `/resumen`: las transacciones guardadas en Cassandra, y las aprobadas, rechazadas y en revisión desde que arrancó la API. Se actualizan cada vez que se abre la pestaña. Si la API no responde, muestra un aviso y guiones en lugar de números.
 - **Analizar transacción**: un formulario con el usuario (lista que se llena con `/usuarios`), monto, moneda (MXN, USD o EUR), comercio, ciudad, país y MCC. El MCC se escoge de una lista: 5411, 5812, 5814, 5541, 5999 y 7995. Al enviar muestra el estado en verde, amarillo o rojo, el puntaje y las banderas.
 
 Si la API no responde al cargar, la lista de usuarios usa un ID de ejemplo para que el formulario no quede vacío.
@@ -179,6 +182,4 @@ Para hacerlo más estricto se bajan los umbrales o el z-score; para que moleste 
 - La regla de frecuencia supone que el historial cubre 24 horas. Con usuarios que compran poco, el promedio por hora sale muy bajo y la regla se dispara con pocas compras.
 - La de ubicación solo ve la ciudad. No sabe que CDMX y Toluca están a una hora, ni que Tijuana y San Diego están pegadas.
 - Las transacciones rechazadas no quedan registradas en ningún lado, así que no hay forma de auditarlas después.
-- `/health` solo revisa que exista la sesión. Si Cassandra se cae después de arrancar la API, sigue respondiendo `healthy`.
-- Las tarjetas del dashboard tienen números fijos.
-- Algunos textos del panel tienen los acentos mal codificados (por ejemplo "TransacciÃ³n").
+- Los conteos de decisiones del dashboard viven en la memoria de la API y se pierden al reiniciarla.

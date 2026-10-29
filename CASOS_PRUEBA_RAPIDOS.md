@@ -41,6 +41,7 @@ curl http://localhost:8000/health
 curl http://localhost:8000/usuarios
 curl "http://localhost:8000/historial/<uuid>?limite=5"
 curl http://localhost:8000/estadisticas/<uuid>
+curl http://localhost:8000/resumen
 ```
 
 ## En cqlsh

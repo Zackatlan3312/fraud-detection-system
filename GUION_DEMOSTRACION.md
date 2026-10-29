@@ -84,6 +84,8 @@ SELECT * FROM transacciones_por_usuario WHERE ciudad = 'CDMX';
 4. Oxxo, Guadalajara, 100. Sale **revisión manual con 30**.
    > El monto es normal, pero hace unos segundos compró en CDMX. No se puede estar en las dos ciudades. Es el viaje imposible.
 
+Para cerrar, abrir la pestaña Dashboard. Debe marcar 1 aprobada, 1 rechazada y 2 en revisión, que son las cuatro compras de la demo. Por eso conviene que la API se haya iniciado justo antes de presentar.
+
 Si sobra tiempo, abrir `/docs` y enseñar que la misma prueba se puede hacer desde Swagger.
 
 Si en el paso 2 sale revisión con 30 en lugar de rechazo, ese usuario tiene montos altos en su historial y el 15000 no se ve raro. Cambiar a otro usuario y repetir desde el paso 1.
